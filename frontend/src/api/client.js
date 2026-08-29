@@ -81,9 +81,9 @@ export const exportUrl = (slug, entity) => `${API_BASE}/${slug}/${entity}/export
 export const importItems = (slug, entity, file) => {
   const form = new FormData()
   form.append('file', file)
-  return api.post(`/${slug}/${entity}/import`, form, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
+  // Do not set Content-Type here. The browser must add the multipart boundary;
+  // a bare "multipart/form-data" header can make FastAPI reject the upload.
+  return api.post(`/${slug}/${entity}/import`, form).then((r) => r.data)
 }
 
 // Documents

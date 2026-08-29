@@ -1,6 +1,25 @@
 import { useRef, useState } from 'react'
 import { importItems, exportUrl, importTemplateUrl } from '../api/client'
 
+function importErrorMessage(detail) {
+  if (!detail) return 'Import failed'
+  if (typeof detail === 'string') return detail
+
+  const lines = []
+  if (detail.message) lines.push(detail.message)
+  if (detail.missing_columns?.length) lines.push(`Missing columns: ${detail.missing_columns.join(', ')}`)
+  if (detail.unexpected_columns?.length) lines.push(`Unexpected columns: ${detail.unexpected_columns.join(', ')}`)
+  if (detail.errors?.length) {
+    const examples = detail.errors.slice(0, 3).map((item) => {
+      const location = [item.row && `row ${item.row}`, item.column].filter(Boolean).join(', ')
+      return `${location || 'Data'}: ${item.problem || item.message || 'invalid value'}`
+    })
+    lines.push(...examples)
+    if (detail.errors.length > examples.length) lines.push(`and ${detail.errors.length - examples.length} more error(s)`)
+  }
+  return lines.join(' — ') || 'Import failed'
+}
+
 export default function ImportExportBar({ slug, entity, onImported }) {
   const fileRef = useRef(null)
   const [error, setError] = useState(null)
@@ -16,13 +35,7 @@ export default function ImportExportBar({ slug, entity, onImported }) {
       onImported?.()
     } catch (err) {
       const detail = err?.response?.data?.detail
-      if (detail && typeof detail === 'object') {
-        setError(
-          `Column mismatch. Missing: [${(detail.missing_columns || []).join(', ')}] Unexpected: [${(detail.unexpected_columns || []).join(', ')}]`,
-        )
-      } else {
-        setError(detail || 'Import failed')
-      }
+      setError(importErrorMessage(detail))
     } finally {
       setBusy(false)
       e.target.value = ''
