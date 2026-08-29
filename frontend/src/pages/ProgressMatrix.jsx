@@ -9,6 +9,7 @@ import {
   setPlanDates,
 } from '../api/client'
 import { useAuth } from '../auth/AuthContext.jsx'
+import ImportExportBar from '../components/ImportExportBar.jsx'
 
 // 予定実績表 — one row per item, one column per day, symbols in the cells.
 // Not a bar chart: the Gantt view already does that, and this exists to be
@@ -175,6 +176,19 @@ export default function ProgressMatrix() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* Date maintenance belongs to the schedule import, not the Function
+          List import: this sheet carries both plan dates and auditable manual
+          actual overrides for every Matrix entity (including Functions). */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 rounded-lg border border-gray-200 bg-white px-3 py-2">
+        <div>
+          <div className="text-sm font-medium text-gray-800">Progress Matrix dates</div>
+          <div className="text-xs text-gray-500">
+            Bulk plan dates and manual actual overrides; derived actuals remain read-only in the export.
+          </div>
+        </div>
+        <ImportExportBar slug={slug} entity="schedule" onImported={load} />
       </div>
 
       {/* Filters */}

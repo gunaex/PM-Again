@@ -329,6 +329,12 @@ def export_schedule(
                 "actual_start_override": r["actual_start_override"],
                 "actual_end_override": r["actual_end_override"],
                 "override_reason": r["override_reason"],
+                "actual_start_derived": r["actual_start_derived"],
+                "actual_end_derived": r["actual_end_derived"],
+                "actual_start": r["actual_start"],
+                "actual_end": r["actual_end"],
+                "actual_start_source": r["actual_start_source"],
+                "actual_end_source": r["actual_end_source"],
             }
         )
     return export_response(rows, SCHEDULE.export_columns, f"{slug}-schedule.xlsx")

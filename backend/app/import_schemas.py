@@ -324,9 +324,23 @@ SCHEDULE = ImportSchema(
     enums={"entity_type": PROGRESS_ENTITY_TYPES},
     required=["entity_type", "entity_code"],
     dates=["plan_start", "plan_end", "actual_start_override", "actual_end_override"],
+    derived_export=[
+        "actual_start_derived",
+        "actual_end_derived",
+        "actual_start",
+        "actual_end",
+        "actual_start_source",
+        "actual_end_source",
+    ],
     notes={
         "actual_start_override": "Only for work with no activity log to derive from — the entered date is "
         "flagged in the Progress Matrix as manually set.",
+        "actual_start_derived": "Read-only actual start derived from the activity log's status changes.",
+        "actual_end_derived": "Read-only actual end derived from the activity log's status changes.",
+        "actual_start": "Read-only effective start used by the Matrix: override when present, otherwise derived.",
+        "actual_end": "Read-only effective end used by the Matrix: override when present, otherwise derived.",
+        "actual_start_source": "Read-only: 'override' or 'derived'.",
+        "actual_end_source": "Read-only: 'override' or 'derived'.",
     },
 )
 
